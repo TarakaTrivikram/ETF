@@ -1,0 +1,64 @@
+BOF;GTSLPROFILE;1.0
+
+// Jerome Dela Cruz , Creation Date: 24/08/2022
+// Contrib C03170, Source Id 4
+
+///////////////////////////////////////////
+// File format structure
+///////////////////////////////////////////
+SEPARATOR;semicolon
+
+///////////////////////////////////////////
+// Data structure
+///////////////////////////////////////////
+FIRSTCOLUMN;CELLCOL(FINDCELL("1:7","Price"))
+LASTCOLUMN;CELLCOL(FINDCELL("1:7","Units in Issue"))
+FIRSTLINE;CELLLINE(FINDCELL("1:7","Price"))+2
+CONSTANT;IDCOL;CELLCOL(FINDCELL("1:7","ISIN"))
+
+///////////////////////////////////////////
+// Data modifications
+///////////////////////////////////////////
+SET;"E67";"0"
+SET;"E66";"0"
+SET;"E65";"0"
+SET;"J70";"0"
+
+
+///////////////////////////////////////////
+// Assertions on file format
+///////////////////////////////////////////
+//ASSERT;;IsNum(CURCELL)
+
+///////////////////////////////////////////
+// Identification (NAMETREE or SOURCE_CODE)
+///////////////////////////////////////////
+NAMETREE;FIRSTLINE-2
+NAMETREE;ExcelColName(IDCOL)
+IDENTIFIER;NAMETREE;
+
+///////////////////////////////////////////
+// Format Date
+///////////////////////////////////////////
+DATE;XL;CELL("B4")
+
+///////////////////////////////////////////
+// Data to ignore
+///////////////////////////////////////////
+IGNORE;ISEMPTY(CURCELL)
+IGNOREDCOL;;CONTAIN(LINE(FIRSTLINE-2), "Bloomberg Ticker")
+IGNOREDCOL;;CONTAIN(LINE(FIRSTLINE-2), "Prior day price")
+IGNOREDCOL;;CONTAIN(LINE(FIRSTLINE-2), "Movement")
+IGNOREDCOL;;CONTAIN(LINE(FIRSTLINE-2), "Yield")
+IGNOREDCOL;;CONTAIN(LINE(FIRSTLINE-2), "Currency")
+IGNOREDCOL;;CONTAIN(LINE(FIRSTLINE-2), "Valuation Date")
+IGNOREDCOL;;CONTAIN(LINE(FIRSTLINE-2), "Total NAV")
+IGNOREDCOL;;CONTAIN(LINE(FIRSTLINE-2), "TIS Information")
+IGNORE;CURCELL==0
+
+///////////////////////////////////////////
+// Execute the profile
+///////////////////////////////////////////
+RUN_LOADTS;decimal_delimiter=point,thousand_delimiter=none,updatena=no,update_mode=update_diffdb
+
+EOF
